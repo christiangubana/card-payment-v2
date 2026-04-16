@@ -56,7 +56,7 @@ export default function PaymentPage() {
     }, 1200);
   }
 
-  const { iframeRef, tokenizeCard, clearForm } = useIframeMessaging({
+  const { iframeRef, tokenizeCard, clearForm, isIframeReady } = useIframeMessaging({
     onTokenized(data: StoredCard) {
       showToast('Card tokenized, processing payment...', 'info');
       if (saveCardRef.current) addCard(data);
@@ -80,7 +80,11 @@ export default function PaymentPage() {
       showToast('Processing payment with saved card...', 'info');
       processPayment(cards[selectedIndex].token, true);
     } else {
-      tokenizeCard();
+      const started = tokenizeCard();
+      if (!started) {
+        setProcessing(false);
+        showToast('Card form is still loading. Please try again.', 'error');
+      }
     }
   }
 
@@ -142,7 +146,7 @@ export default function PaymentPage() {
       <button
         className={styles.payButton}
         onClick={handlePay}
-        disabled={processing}
+        disabled={processing || (selectedIndex === null && !isIframeReady)}
       >
         {processing ? (
           <>

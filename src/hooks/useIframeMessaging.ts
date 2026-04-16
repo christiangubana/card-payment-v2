@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { StoredCard, ValidationError } from '@/types/payment';
 
 const ALLOWED_INBOUND = new Set([
@@ -43,13 +43,15 @@ interface IframeEvents {
 export function useIframeMessaging(events: IframeEvents) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const eventsRef = useRef(events);
+  const [isIframeReady, setIsIframeReady] = useState(false);
   eventsRef.current = events;
 
   const send = useCallback((type: string, payload: object = {}) => {
     const win = iframeRef.current?.contentWindow;
-    if (!win) return;
+    if (!win) return false;
     console.log('[postMessage → iframe]', type);
     win.postMessage({ type, payload }, window.location.origin);
+    return true;
   }, []);
 
   useEffect(() => {
@@ -67,6 +69,7 @@ export function useIframeMessaging(events: IframeEvents) {
           send('INJECT_STYLES', { css: getIframeStyles() });
           break;
         case 'STYLES_APPLIED':
+          setIsIframeReady(true);
           resizeIframe(iframeRef.current);
           break;
         case 'VALIDATION_ERROR':
@@ -90,6 +93,7 @@ export function useIframeMessaging(events: IframeEvents) {
     if (!iframe) return;
 
     function injectStyles() {
+      setIsIframeReady(false);
       send('INJECT_STYLES', { css: getIframeStyles() });
       setTimeout(() => resizeIframe(iframe), 100);
     }
@@ -107,6 +111,7 @@ export function useIframeMessaging(events: IframeEvents) {
 
   return {
     iframeRef,
+    isIframeReady,
     tokenizeCard: useCallback(() => send('TOKENIZE_CARD'), [send]),
     clearForm: useCallback(() => send('CLEAR_FORM'), [send]),
   };
