@@ -1,29 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { isAllowedInbound, MessageType } from '@/lib/message-protocol';
+import { getIframeStyles } from '@/lib/iframe-styles';
 import type { StoredCard, ValidationError } from '@/types/payment';
-
-const ALLOWED_INBOUND = new Set([
-  'CARD_IFRAME_READY',
-  'STYLES_APPLIED',
-  'VALIDATION_ERROR',
-  'CARD_TOKENIZED',
-]);
-
-function getIframeStyles(): string {
-  return [
-    'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: transparent; color: #fff; }',
-    '.form-group { margin-bottom: 16px; }',
-    '.form-row { display: flex; gap: 12px; }',
-    '.form-group.half { flex: 1; }',
-    'label { display: block; font-size: 12px; color: #8a8a8a; margin-bottom: 6px; letter-spacing: 0.3px; }',
-    'input { width: 100%; padding: 16px 14px; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 12px; color: #fff; font-size: 16px; outline: none; transition: border-color 0.2s ease; }',
-    'input::placeholder { color: #555; }',
-    'input:focus { border-color: #d1f526; }',
-    'input.input-error { border-color: #ff4d4d; }',
-    '.error-message { display: block; font-size: 12px; color: #ff4d4d; margin-top: 4px; min-height: 16px; }',
-  ].join('');
-}
 
 function resizeIframe(iframe: HTMLIFrameElement | null) {
   if (!iframe) return;
@@ -60,22 +40,22 @@ export function useIframeMessaging(events: IframeEvents) {
     function onMessage(e: MessageEvent) {
       if (e.origin !== origin) return;
       const { type, payload } = e.data ?? {};
-      if (!type || !ALLOWED_INBOUND.has(type)) return;
+      if (!type || !isAllowedInbound(type)) return;
 
       console.log('[postMessage ← iframe]', type);
 
       switch (type) {
-        case 'CARD_IFRAME_READY':
-          send('INJECT_STYLES', { css: getIframeStyles() });
+        case MessageType.CARD_IFRAME_READY:
+          send(MessageType.INJECT_STYLES, { css: getIframeStyles() });
           break;
-        case 'STYLES_APPLIED':
+        case MessageType.STYLES_APPLIED:
           setIsIframeReady(true);
           resizeIframe(iframeRef.current);
           break;
-        case 'VALIDATION_ERROR':
+        case MessageType.VALIDATION_ERROR:
           eventsRef.current.onValidationError(payload.errors);
           break;
-        case 'CARD_TOKENIZED':
+        case MessageType.CARD_TOKENIZED:
           eventsRef.current.onTokenized(payload);
           break;
       }
@@ -94,7 +74,7 @@ export function useIframeMessaging(events: IframeEvents) {
 
     function injectStyles() {
       setIsIframeReady(false);
-      send('INJECT_STYLES', { css: getIframeStyles() });
+      send(MessageType.INJECT_STYLES, { css: getIframeStyles() });
       setTimeout(() => resizeIframe(iframe), 100);
     }
 
@@ -112,7 +92,7 @@ export function useIframeMessaging(events: IframeEvents) {
   return {
     iframeRef,
     isIframeReady,
-    tokenizeCard: useCallback(() => send('TOKENIZE_CARD'), [send]),
-    clearForm: useCallback(() => send('CLEAR_FORM'), [send]),
+    tokenizeCard: useCallback(() => send(MessageType.TOKENIZE_CARD), [send]),
+    clearForm: useCallback(() => send(MessageType.CLEAR_FORM), [send]),
   };
 }

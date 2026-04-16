@@ -1,14 +1,8 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
+import { STORAGE_KEY, DEMO_CARDS } from '@/lib/constants';
 import type { StoredCard } from '@/types/payment';
-
-const STORAGE_KEY = 'storedCards';
-
-const DEMO_CARDS: StoredCard[] = [
-  { token: 'tok_demo_visa', maskedPan: '4111****1111', last4: '1111', expiryDate: '12/28', cardholderName: 'John Smith', cardBrand: 'visa' },
-  { token: 'tok_demo_mc', maskedPan: '5500****0004', last4: '0004', expiryDate: '06/27', cardholderName: 'Jane Doe', cardBrand: 'mastercard' },
-];
 
 function readFromStorage(): StoredCard[] {
   try {
