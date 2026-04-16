@@ -1,0 +1,99 @@
+.section {
+  margin-bottom: 28px;
+}
+
+.grid {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.grid::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  flex: 0 0 180px;
+  background: var(--bg-card);
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  padding: 14px;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.card:hover {
+  background: #363636;
+}
+
+.selected {
+  border-color: var(--accent);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.brandIcon {
+  width: 42px;
+  height: 28px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.visa {
+  background: linear-gradient(135deg, #1a1f71, #2e3192);
+}
+
+.mastercard {
+  background: linear-gradient(135deg, #555, #777);
+  position: relative;
+}
+
+.mcCircle1,
+.mcCircle2 {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.mcCircle1 {
+  background: #eb001b;
+}
+
+.mcCircle2 {
+  background: #f79e1b;
+  margin-left: -6px;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 16px;
+  transition: color var(--transition);
+  line-height: 1;
+}
+
+.deleteBtn:hover {
+  color: var(--error);
+}
+
+.info {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
