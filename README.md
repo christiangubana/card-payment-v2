@@ -40,25 +40,43 @@ The iframe content is intentionally **not** a React component. In production, th
 
 ```
 card-payment-v2/
-├── public/iframe/           # Static iframe files (PCI scope, vanilla JS)
+├── public/iframe/                  # Static iframe files (PCI scope, vanilla JS)
 │   ├── card-form.html
 │   └── card-form.js
 ├── src/
 │   ├── app/
-│   │   ├── globals.css      # CSS variables + reset
-│   │   ├── layout.tsx       # Root layout with metadata
-│   │   └── page.tsx         # Entry point → PaymentPage
-│   ├── components/
-│   │   ├── PaymentPage.tsx  # Main orchestrator (state, payment flow)
-│   │   ├── StoredCards.tsx   # Stored card tiles (select, delete)
-│   │   ├── CardIframe.tsx   # Iframe wrapper (forwardRef)
-│   │   ├── Toast.tsx        # Auto-dismiss toast notifications
-│   │   └── *.module.css     # Scoped styles per component
+│   │   ├── globals.css             # CSS variables + reset
+│   │   ├── layout.tsx              # Root layout with metadata
+│   │   └── page.tsx                # Entry point → PaymentPage
+│   ├── components/                 # Co-located component folders
+│   │   ├── PaymentPage/
+│   │   │   ├── index.tsx           # Main orchestrator (state, payment flow)
+│   │   │   └── PaymentPage.module.css
+│   │   ├── StoredCards/
+│   │   │   ├── index.tsx           # Stored card tiles (select, delete)
+│   │   │   └── StoredCards.module.css
+│   │   ├── CardIframe/
+│   │   │   ├── index.tsx           # Iframe wrapper (forwardRef)
+│   │   │   └── CardIframe.module.css
+│   │   └── Toast/
+│   │       ├── index.tsx           # Auto-dismiss toast notifications
+│   │       └── Toast.module.css
 │   ├── hooks/
 │   │   ├── useStoredCards.ts       # localStorage persistence + demo seeding
 │   │   └── useIframeMessaging.ts   # postMessage protocol (send, receive, resize)
-│   └── types/
-│       └── payment.ts       # Shared TypeScript interfaces
+│   ├── lib/                        # Pure logic, no React dependency
+│   │   ├── constants.ts            # Payment config, storage key, demo cards
+│   │   ├── message-protocol.ts     # Message types, allowlists, type guards
+│   │   ├── iframe-styles.ts        # CSS payload injected into card iframe
+│   │   ├── validation.ts           # Luhn check, PAN/expiry/CVV validation
+│   │   └── payment-service.ts      # Mock POST /payments/process
+│   ├── types/
+│   │   └── payment.ts              # Shared TypeScript interfaces
+│   └── __tests__/                  # Unit tests (Jest)
+│       ├── validation.test.ts      # Luhn, PAN, expiry, CVV, brand detection
+│       ├── message-protocol.test.ts# Protocol contract + direction guards
+│       └── useStoredCards.test.ts   # Hook: add, remove, dedup, persistence
+├── jest.config.mjs
 ├── package.json
 ├── tsconfig.json
 └── next.config.mjs
@@ -85,6 +103,24 @@ npm run dev
 Open `http://localhost:3000` in your browser.
 
 > **Demo mode:** Append `?demo` to pre-seed stored cards: `http://localhost:3000/?demo`
+
+## Running Tests
+
+```bash
+# Run all unit tests
+npm test
+
+# Run tests in watch mode (re-runs on file changes)
+npm run test:watch
+```
+
+The test suite covers three areas:
+
+| Suite | What it verifies |
+|-------|-----------------|
+| `validation.test.ts` | Luhn algorithm, PAN/expiry/CVV/name validation, card brand detection |
+| `message-protocol.test.ts` | Message type allowlists, direction guards, contract parity with `card-form.js` |
+| `useStoredCards.test.ts` | Hook behaviour: localStorage persistence, add/remove, deduplication, corrupted data recovery |
 
 ## Design Decisions
 
