@@ -88,10 +88,10 @@ card-payment-v2/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/christiangubana/card-payment.git
+git clone https://github.com/christiangubana/card-payment-v2.git
 
 # 2. Navigate into the v2 project
-cd card-payment/card-payment-v2
+cd card-payment-v2
 
 # 3. Install dependencies
 npm install
