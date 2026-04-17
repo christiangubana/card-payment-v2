@@ -2,7 +2,7 @@
 
 A mocked card payment page demonstrating PCI-compliant separation between a main payment page and an embedded iframe (Hosted Payment Page). All communication happens via browser `postMessage` window events.
 
-This is the Next.js + TypeScript rewrite of the [vanilla JS v1](../card-payment/).
+This is the Next.js + TypeScript rewrite of the [vanilla JS v1](https://github.com/christiangubana/card-payment).
 
 ## Architecture
 
