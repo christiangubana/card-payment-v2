@@ -72,9 +72,6 @@ describe('type-guard helpers', () => {
 });
 
 describe('contract parity with card-form.js', () => {
-  // The iframe (public/iframe/card-form.js) maintains its own allowlist.
-  // These string-literal assertions act as a contract test — if either side
-  // renames a message type, this test breaks.
   const IFRAME_SENDS = ['CARD_IFRAME_READY', 'STYLES_APPLIED', 'VALIDATION_ERROR', 'CARD_TOKENIZED'];
   const IFRAME_ACCEPTS = ['INJECT_STYLES', 'TOKENIZE_CARD', 'CLEAR_FORM'];
 

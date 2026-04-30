@@ -65,9 +65,7 @@ export function useIframeMessaging(events: IframeEvents) {
     return () => window.removeEventListener('message', onMessage);
   }, [send]);
 
-  // The iframe may load before React hydrates, causing CARD_IFRAME_READY to be
-  // missed. This effect uses the iframe's load event as a fallback to ensure
-  // styles are always injected regardless of timing.
+  // Fallback for when the iframe loads before React hydrates and CARD_IFRAME_READY is missed.
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
@@ -84,7 +82,9 @@ export function useIframeMessaging(events: IframeEvents) {
       if (iframe.contentDocument?.readyState === 'complete') {
         injectStyles();
       }
-    } catch { /* cross-origin in production */ }
+    } catch {
+      // cross-origin readyState read may throw in production
+    }
 
     return () => iframe.removeEventListener('load', injectStyles);
   }, [send]);

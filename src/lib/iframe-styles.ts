@@ -1,8 +1,3 @@
-/**
- * CSS payload injected into the card iframe via postMessage.
- * Kept as a standalone module so the style definition is separate from
- * the messaging logic that delivers it.
- */
 export function getIframeStyles(): string {
   return [
     'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: transparent; color: #fff; }',

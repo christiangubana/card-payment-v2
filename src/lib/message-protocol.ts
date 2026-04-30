@@ -1,17 +1,9 @@
-/**
- * Centralised message-type contract between the parent React app and the
- * vanilla-JS card iframe.  Both sides maintain independent allowlists (the
- * iframe's is in public/iframe/card-form.js) — this module is the single
- * source of truth for the React side.
- */
-
+// Mirror of the allowlist in public/iframe/card-form.js.
 export const MessageType = {
-  // Parent → Iframe
   INJECT_STYLES: 'INJECT_STYLES',
   TOKENIZE_CARD: 'TOKENIZE_CARD',
   CLEAR_FORM: 'CLEAR_FORM',
 
-  // Iframe → Parent
   CARD_IFRAME_READY: 'CARD_IFRAME_READY',
   STYLES_APPLIED: 'STYLES_APPLIED',
   VALIDATION_ERROR: 'VALIDATION_ERROR',
